@@ -1,1 +1,19 @@
-Hello World
+---
+layout: default
+---
+
+<div class="home">
+   Hello
+   <ul class="post-list">
+    {% for post in paginator.posts %}
+      <li>
+        <h2>
+          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">
+            {{ post.date | date: "%Y.%m.%-d." }}
+            {{ post.title }}</a>
+          <small>{{ post.authors }}</small>
+        </h2>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
