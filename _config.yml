@@ -1,0 +1,16 @@
+# Site settings
+
+title: Partially Applicable
+email: sabauma@gmail.com
+description: My Ramblings
+baseurl: ""
+url: "http://sabauma.github.io"
+
+# Build settings
+markdown: redcarpet
+highlighter: pygments
+redcarpet:
+    extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "with_toc_data"]
+
+paginate: 10
+
