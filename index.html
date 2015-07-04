@@ -3,17 +3,18 @@ layout: default
 ---
 
 <div class="home">
-   Hello
-   <ul class="post-list">
-    {% for post in paginator.posts %}
-      <li>
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">
-            {{ post.date | date: "%Y.%m.%-d." }}
-            {{ post.title }}</a>
-          <small>{{ post.authors }}</small>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
+    <h1>Posts</h1>
+    <ul class="post-list">
+        {% for post in paginator.posts %}
+        <li>
+            <h2>
+                <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">
+                    {{ post.date | date: "%Y.%m.%-d." }}
+                    {{ post.title }}</a>
+                <small>By: {{ post.authors }}</small>
+            </h2>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="http://www.github.com/sabauma">Github</a>
 </div>
