@@ -13,7 +13,7 @@ Since I am working on this very issue as a Mozilla intern, I am going to try to
 give an updated account of what SpiderMonkey does wrong and some of the initial
 fixes I am working on.
 
-As a running example, I'll make use of Shu's `Array#forEach` benchmark
+As a running example, I'll make use of the same benchmark Shu used:
 
 {% highlight javascript %}
 function benchmark(n, iters, f) {
@@ -49,7 +49,7 @@ function doForEach(outer) {
 console.log(benchmark(50, 50000, doForEach));
 {% endhighlight %}
 
-and explain why it is nearly 3x slower than the more imperative version.
+and explain why it is nearly 3x slower than the imperative version.
 
 {% highlight javascript %}
 function doForEach(outer) {
@@ -65,9 +65,10 @@ function doForEach(outer) {
 }
 {% endhighlight %}
 
-Now, SpiderMonkey does quite a good job optimizing the second version, producing
-code where the inner loop operates over contiguous arrays of `Double`s without
-intervening type tests.
+Unsurprisingly, SpiderMonkey does quite a good job optimizing the second
+version, producing code where the inner loop operates over contiguous arrays of
+`Double`s without intervening type tests.
+This is the kind of low-level code that compilers want us to write for them.
 The code generated for the first version is markedly worse due to the
 interactions of two shortcomings of SpiderMonkey:
 
@@ -123,7 +124,7 @@ This version is only 20% slower than using manual `for`-loops.
 While this works, it is unsatisfying and does not generalize well - we expect to
 use `myForEach` at many locations in practice, requiring many duplicates.
 
-What if we fix the inliner?
+What if we twiddle the inliner?
 ---
 
 As a simple test, turn off the inlining restriction on recursive functions.
@@ -159,5 +160,12 @@ When this reasoning is incorporated into SpiderMonkey, the `forEach` example
 performs as well as the version with duplicated code.
 This version is still ~20% slower than manual use of `for`-loops, but that is
 still a sight better than 300% slower.
-
+So, a combination of judicious inlining and propagation of type information
+largely solves the problem.
+Unfortuntately, the restrictions on inlining are there for a good reason
+-- turning the restriction off completely causes significant performance
+regressions on benchmarks making us of recursive functions.
+Thus, a future piece of work is to devise a better inlining heurisitc which can
+disitinguish between truly recursive functions and functions whose usages make
+them appear recursive.
 
