@@ -15,7 +15,7 @@ fixes I am working on.
 
 As a running example, I'll make use of Shu's `Array#forEach` benchmark
 
-```javascript
+{% highlight javascript %}
 function benchmark(n, iters, f) {
     var outer = [];
     for (var i = 0; i < n; i++) {
@@ -47,11 +47,11 @@ function doForEach(outer) {
 }
 
 console.log(benchmark(50, 50000, doForEach));
-```
+{% endhighlight %}
 
 and explain why it is nearly 3x slower than the more imperative version.
 
-```javascript
+{% highlight javascript %}
 function doForEach(outer) {
     var max = -Infinity;
     for (var i = 0; i < outer.length; i++) {
@@ -63,7 +63,7 @@ function doForEach(outer) {
         }
     }
 }
-```
+{% endhighlight %}
 
 Now, SpiderMonkey does quite a good job optimizing the second version, producing
 code where the inner loop operates over contiguous arrays of `Double`s without
@@ -95,7 +95,7 @@ simply duplicate `myForEach` and use a different version at each call site.
 Now, SpiderMonkey inlines both calls and has type information specific to the
 call site.
 
-```javascript
+{% highlight javascript %}
 Array.prototype.myForEach = function (f) {
     for (var i = 0; i < this.length; i++) {
         f(this[i]);
@@ -117,7 +117,7 @@ function doForEach(outer) {
         });
     });
 }
-```
+{% endhighlight %}
 
 This version is only 20% slower than using manual `for`-loops.
 While this works, it is unsatisfying and does not generalize well - we expect to
@@ -153,7 +153,7 @@ For an object type \\( o \\), this set is denoted as \\( \\mathrm{index}(o) \\).
 Then, given the type set for the input to an indexing operation, we expect the
 result type set to be
 
-$$ \\mathrm{types} \\left( a[i] \\right) = \\bigcup_{o ~ \\in ~ \\mathrm{types}(a)} \\mathrm{index}(o) $$
+\\[ \\mathrm{types} \\left( a[i] \\right) = \\bigcup_{o ~ \\in ~ \\mathrm{types}(a)} \\mathrm{index}(o) \\]
 
 When this reasoning is incorporated into SpiderMonkey, the `forEach` example
 performs as well as the version with duplicated code.
