@@ -10,7 +10,7 @@ SpiderMonkey](http://rfrn.org/~shu/2013/03/20/two-reasons-functional-style-is-sl
 Shu-yu Guo breaks down some of the issues SpiderMonkey has when optimizing
 functional style programs.
 Since I am working on this very issue as a Mozilla intern, I am going to try to
-give an update account of what SpiderMonkey does wrong and some of the intial
+give an updated account of what SpiderMonkey does wrong and some of the initial
 fixes I am working on.
 
 As a running example, I'll make use of Shu's `Array#forEach` benchmark
@@ -49,7 +49,7 @@ function doForEach(outer) {
 console.log(benchmark(50, 50000, doForEach));
 ```
 
-and show why it is nearly 3x slower than the more imperative version.
+and explain why it is nearly 3x slower than the more imperative version.
 
 ```javascript
 function doForEach(outer) {
