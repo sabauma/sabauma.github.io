@@ -151,10 +151,14 @@ invalidated later.
 Fortunately, SpiderMonkey tracks, as part of an object's type, the set of types
 produced by indexing said object by an integer.
 For an object type \\( o \\), this set is denoted as \\( \\mathrm{index}(o) \\).
-Then, given the type set for the input to an indexing operation, we expect the
-result type set to be
+Given the type set for the receiver of an indexing operation, the expected
+result type can be approximated as
 
-\\[ \\mathrm{types} \\left( a[i] \\right) = \\bigcup_{o ~ \\in ~ \\mathrm{types}(a)} \\mathrm{index}(o) \\]
+\\[ T\_{ a[i] } = \\bigcup_{o ~ \\in ~ T\_a} \\mathrm{index}(o), \\]
+
+where \\( T_e \\) is the set of result types for some expression \\( e \\)
+(this notation is taken from the [paper](http://rfrn.org/~shu/drafts/ti.pdf)
+describing SpiderMonkey's type inference algorithm).
 
 When this reasoning is incorporated into SpiderMonkey, the `forEach` example
 performs as well as the version with duplicated code.
@@ -162,10 +166,50 @@ This version is still ~20% slower than manual use of `for`-loops, but that is
 still a sight better than 300% slower.
 So, a combination of judicious inlining and propagation of type information
 largely solves the problem.
-Unfortuntately, the restrictions on inlining are there for a good reason
--- turning the restriction off completely causes significant performance
-regressions on benchmarks making us of recursive functions.
-Thus, a future piece of work is to devise a better inlining heurisitc which can
-disitinguish between truly recursive functions and functions whose usages make
+Sadly, the restrictions on inlining are there for a good reason -- turning the
+restriction off completely causes significant performance regressions on
+benchmarks making us of recursive functions.
+
+This leaves a couple of places where SpiderMonkey can be improved.
+A low hanging piece of fruit is to device a better inlining heurisitc which can
+distinguish between truly recursive functions and functions whose usages make
 them appear recursive.
+A more ambitious target is to improve SpiderMonkey's code generation in cases where
+inlining fails.
+The offending benchmark presented here is relatively small, so a deep inlining
+is not a problem, but we cannot always rely on getting the ideal output from the
+inliner.
+Further, this example relies on outer `myForEach` call getting inlined into its
+caller to provide sufficient type information, which will only occur when the
+caller is also hot.
+In many cases, a function `f` is hot and relies on type information from
+its caller `g` to produce efficient, type-specialized code.
+
+{% highlight javascript %}
+
+/*
+ * Expensive data processing function, with multiple call sites (other than |g|)
+ * which pollute the type information associated with |f|.
+ */
+function f(data) {
+    /* expesive data processing */
+    return result;
+}
+
+function g() {
+    var x = /* some big data set */
+    f(x);
+}
+
+g();
+
+{% endhighlight %}
+
+Currently, the only way to get the type information from `g` to `f` is to
+compile `g` and inline `f` into its call site; this requires the JIT to also
+consider `g` hot as well, a condition which is not implied by `f` being hot.
+Indeed, `g` may only be executed once, but its call to `f` may perform a large
+amount of work, necessitating compilation.
+So, a more difficult fix is to improve type information based on call site
+without inlining.
 
