@@ -97,13 +97,13 @@ Now, SpiderMonkey inlines both calls and has type information specific to the
 call site.
 
 {% highlight javascript %}
-Array.prototype.myForEach = function (f) {
+Array.prototype.myForEachArrayOfArrayOfDouble = function (f) {
     for (var i = 0; i < this.length; i++) {
         f(this[i]);
     }
 }
 
-Array.prototype.myForEach2 = function (f) {
+Array.prototype.myForEachArrayOfDouble = function (f) {
     for (var i = 0; i < this.length; i++) {
         f(this[i]);
     }
@@ -111,8 +111,8 @@ Array.prototype.myForEach2 = function (f) {
 
 function doForEach(outer) {
     var max = -Infinity;
-    outer.myForEach(function (inner) {
-        inner.myForEach2(function (v) {
+    outer.myForEachArrayOfArrayOfDouble(function (inner) {
+        inner.myForEachArrayOfDouble(function (v) {
             if (v > max)
                 max = v;
         });
@@ -122,7 +122,11 @@ function doForEach(outer) {
 
 This version is only 20% slower than using manual `for`-loops.
 While this works, it is unsatisfying and does not generalize well - we expect to
-use `myForEach` at many locations in practice, requiring many duplicates.
+use `myForEach` at many locations with many different types, requiring many
+duplicates.
+C++ solves this problem by using templates to duplicate function bodies and
+perform type specialization helped along by the programmer, while the ideal
+solution for JavaScript solves the problem transparently.
 
 What if we twiddle the inliner?
 ---
