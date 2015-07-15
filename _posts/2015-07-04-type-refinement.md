@@ -128,7 +128,7 @@ C++ solves this problem by using templates to duplicate function bodies and
 perform type specialization helped along by the programmer, while the ideal
 solution for JavaScript solves the problem transparently.
 
-What if we twiddle the inliner?
+Can we improve the inliner?
 ---
 
 As a simple test, turn off the inlining restriction on recursive functions.
