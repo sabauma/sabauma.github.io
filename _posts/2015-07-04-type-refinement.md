@@ -190,13 +190,12 @@ In many cases, a function `f` is hot and relies on type information from
 its caller `g` to produce efficient, type-specialized code.
 
 {% highlight javascript %}
-
 /*
  * Expensive data processing function, with multiple call sites (other than |g|)
  * which pollute the type information associated with |f|.
  */
 function f(data) {
-    /* expesive data processing */
+    /* expensive data processing */
     return result;
 }
 
@@ -206,7 +205,6 @@ function g() {
 }
 
 g();
-
 {% endhighlight %}
 
 Currently, the only way to get the type information from `g` to `f` is to
