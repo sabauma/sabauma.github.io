@@ -17,33 +17,33 @@ As a running example, I'll make use of the same benchmark Shu used:
 
 {% highlight javascript %}
 function benchmark(n, iters, f) {
-    var outer = [];
-    for (var i = 0; i < n; i++) {
-        var inner = [];
-        for (var j = 0; j < n; j++)
-            inner.push(Math.random() * 100);
-        outer.push(inner);
-    }
-    var start = Date.now();
-    for (var i = 0; i < iters; i++)
-        f(outer);
-    return Date.now() - start;
+  var outer = [];
+  for (var i = 0; i < n; i++) {
+    var inner = [];
+    for (var j = 0; j < n; j++)
+      inner.push(Math.random() * 100);
+    outer.push(inner);
+  }
+  var start = Date.now();
+  for (var i = 0; i < iters; i++)
+    f(outer);
+  return Date.now() - start;
 }
 
 Array.prototype.myForEach = function (f) {
-    for (var i = 0; i < this.length; i++) {
-        f(this[i]);
-    }
+  for (var i = 0; i < this.length; i++) {
+    f(this[i]);
+  }
 }
 
 function doForEach(outer) {
-    var max = -Infinity;
-    outer.myForEach(function (inner) {
-        inner.myForEach(function (v) {
-            if (v > max)
-                max = v;
-        });
+  var max = -Infinity;
+  outer.myForEach(function (inner) {
+    inner.myForEach(function (v) {
+      if (v > max)
+        max = v;
     });
+  });
 }
 
 console.log(benchmark(50, 50000, doForEach));
@@ -53,15 +53,15 @@ and explain why it is nearly 3x slower than the imperative version.
 
 {% highlight javascript %}
 function doForEach(outer) {
-    var max = -Infinity;
-    for (var i = 0; i < outer.length; i++) {
-        var inner = outer[i];
-        for (var j = 0; j < inner.length; j++) {
-            var v = inner[j];
-            if (v > max)
-                max = v;
-        }
+  var max = -Infinity;
+  for (var i = 0; i < outer.length; i++) {
+    var inner = outer[i];
+    for (var j = 0; j < inner.length; j++) {
+      var v = inner[j];
+      if (v > max)
+        max = v;
     }
+  }
 }
 {% endhighlight %}
 
@@ -83,7 +83,7 @@ This means that the outer call to `myForEach` (and its kernel) is inlined into
 `doForEach`, and a function call is emitted for the inner call to `myForEach`.
 
 Unfortunately, SpiderMonkey cannot generate optimized code for `myForEach`
-without inlining it into the caller, which bring us to problem 2.
+without inlining it into the caller, which bring us to problem two.
 SpiderMonkey tracks the types of function arguments and the result types of
 JavaScript operations and uses that information to generate code specialized to
 those types.
@@ -91,32 +91,32 @@ This benchmark invokes `myForEach` on arrays of double and arrays of arrays of
 doubles, requiring SpiderMonkey to generate code general enough to handle both
 possibilities.
 
-Somewhat annoyingly, a simple change to the code fixes both of these issues:
-simply duplicate `myForEach` and use a different version at each call site.
+Annoyingly, a simple change to the code fixes both of these issues: simply
+duplicate `myForEach` and use a different version at each call site.
 Now, SpiderMonkey inlines both calls and has type information specific to the
 call site.
 
 {% highlight javascript %}
 Array.prototype.myForEachArrayOfArrayOfDouble = function (f) {
-    for (var i = 0; i < this.length; i++) {
-        f(this[i]);
-    }
+  for (var i = 0; i < this.length; i++) {
+    f(this[i]);
+  }
 }
 
 Array.prototype.myForEachArrayOfDouble = function (f) {
-    for (var i = 0; i < this.length; i++) {
-        f(this[i]);
-    }
+  for (var i = 0; i < this.length; i++) {
+    f(this[i]);
+  }
 }
 
 function doForEach(outer) {
-    var max = -Infinity;
-    outer.myForEachArrayOfArrayOfDouble(function (inner) {
-        inner.myForEachArrayOfDouble(function (v) {
-            if (v > max)
-                max = v;
-        });
+  var max = -Infinity;
+  outer.myForEachArrayOfArrayOfDouble(function (inner) {
+    inner.myForEachArrayOfDouble(function (v) {
+      if (v > max)
+        max = v;
     });
+  });
 }
 {% endhighlight %}
 
