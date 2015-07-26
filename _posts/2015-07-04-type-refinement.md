@@ -15,7 +15,7 @@ fixes I am working on.
 
 As a running example, I'll make use of the same benchmark Shu used:
 
-{% highlight javascript %}
+{% highlight javascript linenos %}
 function benchmark(n, iters, f) {
   var outer = [];
   for (var i = 0; i < n; i++) {
