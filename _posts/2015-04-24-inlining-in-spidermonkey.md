@@ -63,7 +63,7 @@ In short, the propagation of type information enabled by inlining is a major
 boon to many programs, and so we want inlining to work for these
 pseudo-recursive functions as well.
 
-Solution
+Add Some Context
 ---
 
 From the criteria outlined above, we want to extend the inliner to better handle
