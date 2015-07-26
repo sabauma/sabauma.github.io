@@ -172,7 +172,10 @@ So, a combination of judicious inlining and propagation of type information
 largely solves the problem.
 Sadly, the restrictions on inlining are there for a good reason -- turning the
 restriction off completely causes significant performance regressions on
-benchmarks making us of recursive functions.
+benchmarks making use of recursive functions.
+
+Areas to improve upon
+---
 
 This leaves a couple of places where SpiderMonkey can be improved.
 A low hanging piece of fruit is to device a better inlining heurisitc which can
@@ -213,5 +216,6 @@ consider `g` hot as well, a condition not implied by `f` being hot.
 Indeed, `g` may only be executed once, but its call to `f` may perform a large
 amount of work, necessitating compilation.
 So, a more difficult fix is to improve type information based on call site
-without inlining.
+without inlining or determine when compiling the caller of a hot function is
+advantageous.
 
