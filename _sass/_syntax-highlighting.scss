@@ -2,7 +2,8 @@
  * Syntax highlighting styles
  */
 .highlight {
-    @extend %vertical-rhythm;
+    border-radius: 5px;
+    /*@extend %vertical-rhythm;*/
     background: #272822;
 
     .hll { background-color: #49483e }
