@@ -51,7 +51,7 @@ console.log(benchmark(50, 50000, doForEach));
 
 and explain why it is nearly 3x slower than the imperative version.
 
-{% highlight javascript %}
+{% highlight javascript linenos %}
 function doForEach(outer) {
   var max = -Infinity;
   for (var i = 0; i < outer.length; i++) {
@@ -96,7 +96,7 @@ duplicate `myForEach` and use a different version at each call site.
 Now, SpiderMonkey inlines both calls and has type information specific to the
 call site.
 
-{% highlight javascript %}
+{% highlight javascript linenos %}
 Array.prototype.myForEachArrayOfArrayOfDouble = function (f) {
   for (var i = 0; i < this.length; i++) {
     f(this[i]);
@@ -189,7 +189,7 @@ caller is also hot.
 In many cases, a function `f` is hot and relies on type information from
 its caller `g` to produce efficient, type-specialized code.
 
-{% highlight javascript %}
+{% highlight javascript linenos %}
 /*
  * Expensive data processing function, with multiple call sites (other than |g|)
  * which pollute the type information associated with |f|.

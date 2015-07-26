@@ -26,7 +26,7 @@ to recursion, however, it is easily fooled into vetoing inlining of
 non-recursive functions.
 A simple example is nested uses of `forEach`:
 
-{% highlight javascript %}
+{% highlight javascript linenos %}
 function benchmark(outer) {
   outer.forEach(function (inner) {
     inner.forEach(function (v)
