@@ -49,7 +49,7 @@ function doForEach(outer) {
 console.log(benchmark(50, 50000, doForEach));
 {% endhighlight %}
 
-and explain why it is nearly 3x slower than the imperative version.
+and explain why it is nearly 3x slower than the tedious, imperative version.
 
 {% highlight javascript linenos %}
 function doForEach(outer) {
