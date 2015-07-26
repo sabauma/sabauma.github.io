@@ -208,8 +208,8 @@ g();
 {% endhighlight %}
 
 Currently, the only way to get the type information from `g` to `f` is to
-compile `g` and inline `f` into its call site; this requires the JIT to also
-consider `g` hot as well, a condition which is not implied by `f` being hot.
+compile `g` and inline `f` into its call site; this requires the JIT to
+consider `g` hot as well, a condition not implied by `f` being hot.
 Indeed, `g` may only be executed once, but its call to `f` may perform a large
 amount of work, necessitating compilation.
 So, a more difficult fix is to improve type information based on call site
