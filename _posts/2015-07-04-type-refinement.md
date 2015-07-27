@@ -72,7 +72,7 @@ This is the kind of low-level code that compilers want us to write for them.
 The code generated for the first version is markedly worse due to the
 interactions of two shortcomings of SpiderMonkey:
 
-1. Poor inlining heuristics for recursive functions
+1. Bad inlining heuristics for recursive functions
 2. Poor type specialization of certain operations
 
 Problem 1 is a result of the conservative nature of SpiderMonkey, which must
@@ -163,6 +163,8 @@ result type can be approximated as
 where \\( T_e \\) is the set of result types for some expression \\( e \\)
 (this notation is taken from the [paper](http://rfrn.org/~shu/drafts/ti.pdf)
 describing SpiderMonkey's type inference algorithm).
+Simply, this equation says that the possible result type of indexing an object
+is the union of its possible index type sets.
 
 When this reasoning is incorporated into SpiderMonkey, the `forEach` example
 performs as well as the version with duplicated code.
@@ -181,6 +183,7 @@ This leaves a couple of places where SpiderMonkey can be improved.
 A low hanging piece of fruit is to device a better inlining heurisitc which can
 distinguish between truly recursive functions and functions whose usages make
 them appear recursive.
+
 A more ambitious target is to improve SpiderMonkey's code generation in cases where
 inlining fails.
 The offending benchmark presented here is relatively small, so a deep inlining
@@ -218,4 +221,21 @@ amount of work, necessitating compilation.
 So, a more difficult fix is to improve type information based on call site
 without inlining or determine when compiling the caller of a hot function is
 advantageous.
+
+On a final note, it may seem reasonable to apply the optimization described
+above to general property accesses.
+The element types are stored are treated as a special property for each type, so
+applying this logic to property reads is simple.
+Alas, this has no effect on performance due to an eccentricity of how arrays
+special cased by the type inferencer.
+Arrays are typed based on the types of there elements, while other types are
+simply identified by their class.
+So, arrays really have types like `Array<Double>` or `Array<String>`, whereas
+all instances of my special array type `MyArray` will have type `MyArray`
+irrespective of the elements therein.
+This means the type inferencer cannot determine whether some expression always
+produces a `MyArray` containing integers.
+This coarseness ensures that the number of types in a program stays small, but
+we lose the ability to make important distinctions about the structure of a type
+in the type system.
 
