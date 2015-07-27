@@ -170,8 +170,8 @@ is the union of its possible index type sets.
 Care must be taken when using this refinement, it is not always the case that
 this computation will yield more precise types than the result types recorded
 for an subscript operation.
-For that reason, we only have SpiderMonkey perform this refinement when the
-computed type is a subset of the recorded result types (i.e. we take the more
+For that reason, SpiderMonkey only performs this refinement when the computed
+type is a subset of the recorded result types (i.e. we take the more
 precise of the possible result types).
 
 When this reasoning is incorporated into SpiderMonkey, the `forEach` example
