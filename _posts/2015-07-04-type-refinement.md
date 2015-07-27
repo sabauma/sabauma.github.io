@@ -167,6 +167,7 @@ where \\( T_e \\) is the set of result types for some expression \\( e \\)
 describing SpiderMonkey's type inference algorithm).
 Simply, this equation says that the possible result type of indexing an object
 is the union of its possible index type sets.
+
 Care must be taken when using this refinement, it is not always the case that
 this computation will yield more precise types than the result types recorded
 for an subscript operation.
