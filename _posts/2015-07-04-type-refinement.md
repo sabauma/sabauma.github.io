@@ -49,7 +49,9 @@ function doForEach(outer) {
 console.log(benchmark(50, 50000, doForEach));
 {% endhighlight %}
 
-and explain why it is nearly 3x slower than the tedious, imperative version.
+This post will attempt to explain why the above code is nearly 3 times slower
+than the imperative equivalent and how to modify the JIT to recover most of the
+performance hit.
 
 {% highlight javascript linenos %}
 function doForEach(outer) {
