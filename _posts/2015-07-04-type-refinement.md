@@ -234,13 +234,13 @@ On a final note, it may seem reasonable to apply the optimization described
 above to general property accesses.
 The element types are stored are treated as a special property for each type, so
 applying this logic to property reads is simple.
-Alas, this has no effect on performance due to an eccentricity of how arrays
-special cased by the type inferencer.
-Arrays are typed based on the types of there elements, while other types are
-simply identified by their class.
-So, arrays really have types like `Array<Double>` or `Array<String>`, whereas
-all instances of my special array type `MyArray` will have type `MyArray`
-irrespective of the elements therein.
+Alas, this has no observable effect on performance due to an eccentricity of how
+arrays special cased by the type inferencer: arrays are typed based on the types
+of there elements, while other types are simply identified by their class.
+
+In SpiderMonkey's type inferencer, arrays really have types like `Array<Double>`
+or `Array<String>`, whereas all instances of my special array type `MyArray`
+will have type `MyArray` irrespective of the elements therein.
 This means the type inferencer cannot determine whether some expression always
 produces a `MyArray` containing integers.
 This coarseness ensures that the number of types in a program stays small, but
