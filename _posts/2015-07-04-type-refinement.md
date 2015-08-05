@@ -130,7 +130,7 @@ C++ solves this problem by using templates to duplicate function bodies and
 perform type specialization helped along by the programmer, while the ideal
 solution for JavaScript solves the problem transparently.
 
-Can work around the inliner?
+Can we work around the inliner?
 ---
 
 As a simple test, turn off the inlining restriction on recursive functions.
@@ -170,7 +170,7 @@ is the union of its possible index type sets.
 
 Care must be taken when using this refinement, it is not always the case that
 this computation will yield more precise types than the result types recorded
-for an subscript operation.
+for the subscript operation.
 For that reason, SpiderMonkey only performs this refinement when the computed
 type is a subset of the recorded result types (i.e. we take the more
 precise of the possible result types).
